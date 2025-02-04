@@ -70,6 +70,7 @@ export class AuthController {
 
     static login = async (req : Request, res: Response) => {
         try {
+            
             const {email, password} = req.body
             const user = await User.findOne({email})
 
@@ -77,8 +78,10 @@ export class AuthController {
             if(!user){
                 const error = new Error('Usuario no encontrado')
                 res.status(404).json({error: error.message})
+                console.log("1")
                 return
             }
+            
             //Si la cuenta esta confirmada
             if(!user.confirmed){
                 const token = new Token()
@@ -95,7 +98,9 @@ export class AuthController {
                 const error = new Error('El usuario aun no esta confirmado, hemos enviado un email para confirmar')
                 res.status(401).json({error: error.message})
                 return
+                
             }
+            
             //Revisar Password
             const isPasswordCorrect = await checkPassword(password, user.password)
 
@@ -104,6 +109,7 @@ export class AuthController {
                 res.status(401).json({error: error.message})
                 return
             }
+            
 
             const token = generateJWT({id: user.id})
 
